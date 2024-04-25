@@ -1,8 +1,7 @@
-package racingcar.view;
+package racingcar.Processor;
 
 import racingcar.constant.GameMessage;
-import racingcar.domain.Car;
-import racingcar.domain.Cars;
+import racingcar.domain.RaceResult;
 
 import java.util.List;
 
@@ -21,11 +20,13 @@ public class OutputView {
         System.out.println(GameMessage.ROUND_RESULT);
     }
 
-    public void displayRaceStatus(Cars cars) {
-        for (Car car : cars.getCars()) {
-            System.out.println(car.getName() + " : " + getFormattedPosition(car.getPosition()));
-        }
-        printBlankLine();
+    public void displayRaceResults(List<RaceResult> raceResults) {
+        raceResults.stream()
+                .flatMap(raceResult ->
+                        raceResult.getRaceResult().entrySet().stream())
+                .forEach(entry ->
+                        System.out.println(entry.getKey() + " : " + getFormattedPosition(entry.getValue())));
+
     }
 
     public void displayWinners(List<String> winnerNames) {

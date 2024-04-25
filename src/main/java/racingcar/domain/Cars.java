@@ -1,11 +1,10 @@
 package racingcar.domain;
 
 import racingcar.constant.ErrorMessage;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cars {
+public class Cars implements Forwardable{
     private final List<Car> cars;
 
     public Cars(List<String> carNames) {
@@ -21,10 +20,9 @@ public class Cars {
         return cars;
     }
 
-    public void carsForwardIfConditionMet() {
-        this.cars.forEach(car -> {
-            car.forwardIfConditionMet(Race.pickRandomNumber());
-        });
+    @Override
+    public void forwardIfConditionMet() {
+        cars.forEach(Forwardable::forwardIfConditionMet);
     }
 
     public static void checkDuplicateCarName(List<String> carNames) {

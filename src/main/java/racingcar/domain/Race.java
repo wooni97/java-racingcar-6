@@ -2,52 +2,64 @@ package racingcar.domain;
 
 import camp.nextstep.edu.missionutils.Randoms;
 import racingcar.constant.ErrorMessage;
-import racingcar.constant.Number;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Race {
+    public static final int RANDOM_MIN_NUMBER = 0;
+    public static final int RANDOM_MAX_NUMBER = 9;
+    public static final int INITIAL_TRIAL_NUMBER = 0;
+    private final Cars cars;
     private final int totalTrials;
     private int currentTrials;
+    private List<RaceResult> raceResults;
+    private Winners winners;
 
-    public Race(String trialNumber) {
+    public Race(int trialNumber, Cars cars) {
         validate(trialNumber);
-        this.totalTrials = Integer.parseInt(trialNumber);
-        this.currentTrials = Number.INITIAL_TRIAL_NUMBER;
+        this.totalTrials = trialNumber;
+        this.currentTrials = INITIAL_TRIAL_NUMBER;
+        this.cars = cars;
+        this.raceResults = new ArrayList<>(trialNumber);
     }
 
     public static int pickRandomNumber() {
-        return Randoms.pickNumberInRange(Number.RANDOM_MIN_NUMBER, Number.RANDOM_MAX_NUMBER);
+        return Randoms.pickNumberInRange(RANDOM_MIN_NUMBER, RANDOM_MAX_NUMBER);
     }
 
-    public void increaseCurrentTrial() {
+    public void run() {
+        while(!currentTrialReachedTotal()) {
+            cars.forwardIfConditionMet();
+            increaseCurrentTrial();
+            raceResults.add(new RaceResult(cars));
+        }
+
+        winners = new Winners(cars);
+    }
+
+    private void increaseCurrentTrial() {
         this.currentTrials++;
     }
 
-    public boolean currentTrialReachedTotal() {
+    private boolean currentTrialReachedTotal() {
         return this.totalTrials == this.currentTrials;
     }
 
-    public void validate(String trialNumber) {
-        checkTrialNumberIsEmpty(trialNumber);
-        checkTrialNumberIsNumber(trialNumber);
+    public List<String> getWinnerCarsName() {
+        return winners.getWinnerCarsName();
+    }
+
+    public List<RaceResult> getRaceResults() {
+        return raceResults;
+    }
+
+    private void validate(int trialNumber) {
         checkTrialNumberIsNonNegative(trialNumber);
     }
 
-    public void checkTrialNumberIsNumber(String trialNumber) {
-        try {
-            Integer.parseInt(trialNumber);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(ErrorMessage.INVALID_TRIALNUMBER_IS_NOT_NUMBER_MESSAGE);
-        }
-    }
-
-    public void checkTrialNumberIsNonNegative(String trialNumber) {
-        if (Integer.parseInt(trialNumber) < 0) {
-            throw new IllegalArgumentException(ErrorMessage.INVALID_TRIALNUMBER_IS_NOT_NUMBER_MESSAGE);
-        }
-    }
-
-    public void checkTrialNumberIsEmpty(String trialNumber) {
-        if (trialNumber == null || trialNumber.replace(" ", "").isEmpty()) {
+    private void checkTrialNumberIsNonNegative(int trialNumber) {
+        if (trialNumber < 0) {
             throw new IllegalArgumentException(ErrorMessage.INVALID_TRIALNUMBER_IS_NOT_NUMBER_MESSAGE);
         }
     }

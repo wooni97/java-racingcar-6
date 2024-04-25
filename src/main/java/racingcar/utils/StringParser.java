@@ -4,8 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class StringParser {
-    private StringParser() {
-    } //인스턴스화 방지
+    private StringParser() {} //인스턴스화 방지
 
     public static List<String> splitString(String inputString) {
         String[] arr = inputString.split(",");
@@ -16,6 +15,4 @@ public class StringParser {
 
         return Arrays.asList(arr);
     }
-
-
 }

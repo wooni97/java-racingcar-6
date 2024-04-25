@@ -2,47 +2,46 @@ package racingcar.controller;
 
 import racingcar.domain.Cars;
 import racingcar.domain.Race;
-import racingcar.domain.Winners;
-import racingcar.utils.StringParser;
-import racingcar.view.InputView;
-import racingcar.view.OutputView;
+import racingcar.Processor.InputProcessor;
+import racingcar.Processor.OutputView;
 
 import java.util.List;
 
 public class GameController {
-    private final InputView inputView;
+    private final InputProcessor inputProcessor;
     private final OutputView outputView;
     private Cars cars;
     private Race race;
 
-    public GameController(InputView inputView, OutputView outputView) {
-        this.inputView = inputView;
+    public GameController(InputProcessor inputProcessor, OutputView outputView) {
+        this.inputProcessor = inputProcessor;
         this.outputView = outputView;
     }
 
     public void run() {
         setGames();
-        startGame();
+        race.run();
+        showResults();
+        showWinnerCars();
     }
 
     public void setGames() {
         outputView.displayCarNamesInputMessage();
-        List<String> carNames = getCarNames();
+        List<String> carNames = inputProcessor.readCarNames();
         this.cars = new Cars(carNames);
 
         outputView.displayNumberOfTrialsQuestion();
-        this.race = new Race(inputView.readTrialNumber());
+        this.race = new Race(inputProcessor.readTrialNumber(), cars);
     }
 
-    public void startGame() {
-        outputView.displayRoundResultMessage();
 
-        while (!race.currentTrialReachedTotal()) {
-            cars.carsForwardIfConditionMet();
-            race.increaseCurrentTrial();
-            outputView.displayRaceStatus(cars);
-        }
-        outputView.displayWinners(new Winners(cars.getCars()).getWinnersName());
+    public void showResults() {
+        outputView.displayRoundResultMessage();
+        outputView.displayRaceResults(race.getRaceResults());
+    }
+
+    public void showWinnerCars() {
+        outputView.displayWinners(race.getWinnerCarsName());
     }
 
     public List<String> getCarNames() {

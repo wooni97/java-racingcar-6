@@ -1,10 +1,11 @@
 package racingcar.domain;
 
 import racingcar.constant.ErrorMessage;
-import racingcar.constant.Number;
 
-public class Car {
-
+public class Car implements Forwardable{
+    public static final int FORWARD_CONDITION_NUMBER = 4;
+    public static final int VALID_CAR_NAME_MAX_LENGTH = 5;
+    public static final int INITIAL_POSITION = 0;
     private final String name;
     private int position;
 
@@ -12,11 +13,12 @@ public class Car {
         validate(name);
 
         this.name = name;
-        this.position = Number.INITIAL_POSITION;
+        this.position = INITIAL_POSITION;
     }
 
-    public void forwardIfConditionMet(int forwardCondition) {
-        if (forwardCondition >= Number.FORWARD_CONDITION_NUMBER) {
+    @Override
+    public void forwardIfConditionMet() {
+        if (Race.pickRandomNumber() >= FORWARD_CONDITION_NUMBER) {
             this.position++;
         }
     }
@@ -30,27 +32,12 @@ public class Car {
     }
 
     public void validate(String name) {
-        checkCarNameEmpty(name);
         checkCarNameLengthValid(name);
-        checkCarNameContainsWhiteSpace(name);
     }
 
     public void checkCarNameLengthValid(String carName) {
-        if (carName.length() > Number.VALID_CAR_NAME_MAX_LENGTH) {
+        if (carName.length() > Car.VALID_CAR_NAME_MAX_LENGTH) {
             throw new IllegalArgumentException(ErrorMessage.INVALID_NAME_LENGTH_MESSAGE);
         }
     }
-
-    public void checkCarNameEmpty(String carName) {
-        if (carName == null || carName.isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.INVALID_NAME_EMPTY_MESSAGE);
-        }
-    }
-
-    public void checkCarNameContainsWhiteSpace(String carName) {
-        if (carName.length() != carName.replace(" ", "").length()) {
-            throw new IllegalArgumentException(ErrorMessage.INVALID_NAME_CONTAINS_WHITE_SPACE_MESSAGE);
-        }
-    }
-
 }
